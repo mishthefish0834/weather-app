@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ 
+    <style>
+        * {
+            color: white;
+            font-family: 'Mulish', sans-serif;
+        }
+ 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+        }
+ 
+        .container {
+            width: 40vw;
+            background: linear-gradient(#eecda3, #ef629f);
+            padding: 5vw;
+            text-align: center;
+            padding: 20px;
+            border-radius: 30px;
+        }
+        .main .city{
+            margin-bottom: 40px;
+            font-size: 50px;
+            margin-top: 20px;
+        }
+ 
+        button {
+            border-radius: 50%;
+            height: 50px;
+            width: 50px;
+            border: none;
+        }
+        button:hover{
+            box-shadow: 2px 2px 5px black;
+        }
+ 
+        input {
+            height: 40px;
+            width: 60%;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            text-indent: 20px;
+            color: black;
+        }
+ 
+        .searchbar img {
+            width: 20px;
+            height: 20px;
+        }
+ 
+        .more_details {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+        }
+ 
+        .humidity {
+            width: 30%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+ 
+        .windspeed {
+            width: 30%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+ 
+ 
+<body>
+    <div class="container">
+        <div class="searchbar">
+            <input type="text" name="" id="cityInput">
+            <button onclick="fetchData()"><img src="../images/search.png" alt=""></button>
+        </div>
+        <div class="main">
+            <img src="../images/clear.png" alt="error">
+            <p class="temp">0°C</p>
+            <p class="city">Hogwarts</p>
+        </div>
+        <div class="more_details">
+            <div class="humidity">
+                <div class="left">
+                    <img src="../images/humidity.png" alt="error">
+                </div>
+                <div class="right">
+                    <p class="humidity_data">0%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="windspeed">
+                <div class="left">
+                    <img src="../images/wind.png" alt="">
+                </div>
+                <div class="right">
+                    <p class="wind_speed_data">0km/h</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    
+    let appId = "d37b027dc40745d29e85049522b3b66b"
+    let input = document.getElementById("cityInput");
+
+    function fetchData() {
+        let cityName = input.value.trim();
+
+        if (cityName === "") {
+            alert("Please enter a city name.");
+            return;
+        }
+
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${appId}&units=metric`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.cod === 200) {
+                    document.querySelector(".city").innerHTML = data.name;
+                    document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+
+                    document.querySelector(".humidity_data").innerHTML = data.main.humidity + "%";
+                    document.querySelector(".wind_speed_data").innerHTML = data.wind.speed + " km/h";
+
+                    let weatherCondition = data.weather[0].main.toLowerCase();
+                    let weatherImg = document.querySelector(".main img");
+
+                    if (weatherCondition.includes("cloud")) {
+                        weatherImg.src = "../images/clouds.png";
+                    } else if (weatherCondition.includes("clear")) {
+                        weatherImg.src = "../images/clear.png";
+                    } else if (weatherCondition.includes("rain")) {
+                        weatherImg.src = "../images/rain.png";
+                    } else if (weatherCondition.includes("drizzle")) {
+                        weatherImg.src = "../images/drizzle.png";
+                    } else if (weatherCondition.includes("mist") || weatherCondition.includes("fog")) {
+                        weatherImg.src = "../images/mist.png";
+                    } else if (weatherCondition.includes("snow")) {
+                        weatherImg.src = "../images/snow.png";
+                    }
+                } else {
+                    alert("City not found. Please try again!");
+                }
+            })
+    }
+</script>
